@@ -4,6 +4,7 @@ pipeline {
 
     triggers {
         githubPush()
+        /* hhh*/
     }
 
     tools {
