@@ -1,10 +1,11 @@
 
 pipeline {
     agent any
+
     triggers {
         githubPush()
     }
-    
+
     tools {
         maven 'MAVEN-HOME'
     }
@@ -29,12 +30,6 @@ pipeline {
             }
         }
 
-        stage('Install') {
-            steps {
-                bat 'mvn install -f mavenjava/pom.xml'
-            }
-        }
-
         stage('Test') {
             steps {
                 bat 'mvn test -f mavenjava/pom.xml'
@@ -46,14 +41,21 @@ pipeline {
                 bat 'mvn package -f mavenjava/pom.xml'
             }
         }
+
+        stage('Docker Build') {
+            steps {
+                bat 'docker version'
+                bat 'docker build -t mavenjava:latest mavenjava'
+            }
+        }
     }
 
     post {
         success {
-            echo 'Maven Pipeline completed successfully!'
+            echo 'Maven build and Docker image creation completed successfully!'
         }
         failure {
-            echo 'Maven Pipeline failed. Check Console Output.'
+            echo 'Pipeline failed. Check Console Output.'
         }
     }
 }
